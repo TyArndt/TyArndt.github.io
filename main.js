@@ -34,7 +34,7 @@ window.onload = function() {
             game.input.onDown.add(jump, this);
             game.time.events.loop(towerInterval, addtower); 
             addtower();
-            pause_label = game.add.text( 250, 10, 'Pause', { font: '20px Arial', fill: '#fff' });
+            pause_label = game.add.text( 250, 450, 'Pause', { font: '20px Arial', fill: '#fff' });
             pause_label.inputEnabled = true;
             pause_label.events.onInputUp.add(function () {
                 game.paused = true;            
