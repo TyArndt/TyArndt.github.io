@@ -65,7 +65,7 @@ window.onload = function() {
             game.physics.arcade.collide(holden, towerGroup, die);
             //game.physics.arcade.collide(holden, beerGroup, drinkbeer(beerGroup));
 
-            if (game.physics.arcade.overlap(holden, this.beer ,drinkBeer, null, this))
+            //if (game.physics.arcade.overlap(holden, this.beer ,drinkBeer, null, this))
             
             if(holden.y>game.height){
                 die();
