@@ -11,6 +11,9 @@ window.onload = function() {
     var towerHole = 120;
     var towerGroup;
     var beerGroup;
+    var localStorageName = 'HoldenHighScore';
+    var score = 0;
+
 
     var play = function(game) {};
 
@@ -23,8 +26,7 @@ window.onload = function() {
             game.load.image("beer", "beer.png");
         },
         create:function(){
-            //Scale the game to fit the window
-            //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
@@ -67,7 +69,16 @@ window.onload = function() {
                     game.paused = false;
             }
         }
-        },
+
+        //Create Score
+        score = 0
+        scoreText = this.add.text(10, 10, '', { font: '20px Arial', fill: '#fff' });
+        updateScore(score);
+
+        
+        //this.topScore = localStorage.getItem(localStorageName) == null ? 0 : localStorageName.getItem(localStorageName);
+       
+    },
         
         update:function(){
             //Scroll Background image
@@ -82,6 +93,7 @@ window.onload = function() {
             game.physics.arcade.collide(holden, towerGroup, die);
             game.physics.arcade.overlap(holden, beerGroup, function(holden,beer){
                 beerGroup.remove(beer);
+                updateScore(1);
             });
 
             //Die if you fall off screen
@@ -97,7 +109,14 @@ window.onload = function() {
     //Jump
     function jump(){
         holden.body.velocity.y = -thrust;	
-    }
+    };
+
+    //Add Points
+    function updateScore(inc){
+        score += inc;
+        //scoreText.text = 'Score: ' + score + '\nBest: ' + topScore;
+        scoreText.text = 'Score: ' + score;
+    };
 
     //Add Tower
     function addtower(){
@@ -114,6 +133,7 @@ window.onload = function() {
     };
 
     function die(){
+        //localStorage.setItem(localStorageName, Math.max(score, topScore));
         game.state.start("Play");	
     };
 
