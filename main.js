@@ -108,7 +108,7 @@ window.onload = function() {
         var lowertower = new tower(game,320,towerHolePosition+towerHole,-speed);
         game.add.existing(lowertower);
         towerGroup.add(lowertower);
-        var beerme = new beer(game,335,towerHolePosition+50,-speed);
+        var beerme = new beer(game,345,towerHolePosition+50,-speed);
         game.add.existing(beerme);
         beerGroup.add(beerme);
     };
