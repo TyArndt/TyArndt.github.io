@@ -80,9 +80,8 @@ window.onload = function() {
            
            //Physics
             game.physics.arcade.collide(holden, towerGroup, die);
-            game.physics.arcade.overlap(holden, beerGroup, function(holden,beer){
-                beerGroup.remove(beer);
-            });
+            game.physics.arcade.collide(holden, beerGroup, drinkbeer);
+            //game.physics.arcade.collide(holden, beerGroup, drinkbeer(beerGroup));
 
             //Die if you fall off screen
             if(holden.y>game.height){
@@ -94,12 +93,10 @@ window.onload = function() {
     game.state.add("Play",play);
     game.state.start("Play");
 
-    //Jump
     function jump(){
         holden.body.velocity.y = -thrust;	
     }
 
-    //Add Tower
     function addtower(){
         var towerHolePosition = game.rnd.between(50,430-towerHole);
         var uppertower = new tower(game,320,towerHolePosition-480,-speed);
@@ -111,11 +108,19 @@ window.onload = function() {
         var beerme = new beer(game,335,towerHolePosition+50,-speed);
         game.add.existing(beerme);
         beerGroup.add(beerme);
-    };
+    }
 
     function die(){
         game.state.start("Play");	
-    };
+    }
+
+    function drinkbeer(){
+        
+    }
+
+    function drinkBeer(holden, beerGroup){
+        beer.disableBody(true, true);
+    }
 
 
     tower = function (game, x, y, speed) {
@@ -126,15 +131,32 @@ window.onload = function() {
 
     beer = function (game, x, y, speed) {
         Phaser.Sprite.call(this, game, x, y, "beer");
-        this.enableBody= false;
         game.physics.enable(this);
         this.body.velocity.x = speed;
-        
     };
 
     beer.prototype = Object.create(Phaser.Sprite.prototype);
     beer.prototype.constructor = beer;
 
+    beer.prototype.update = function() {
+        if(this.x+this.width<holden.x){
+            this.destroy(true);
+        }
+        if(this.x<-this.width){
+            
+        }
+    };	
+
+
     tower.prototype = Object.create(Phaser.Sprite.prototype);
     tower.prototype.constructor = tower;
+
+    tower.prototype.update = function() {
+        if(this.x+this.width<holden.x){
+
+        }
+        if(this.x<-this.width){
+            this.destroy();
+        }
+    };	
 };
