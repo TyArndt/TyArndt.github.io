@@ -24,7 +24,7 @@ window.onload = function() {
         },
         create:function(){
             //Scale the game to fit the window
-            this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
