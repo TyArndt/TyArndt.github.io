@@ -13,6 +13,7 @@ window.onload = function() {
     var beerGroup;
     var localStorageName = 'HoldenHighScore';
     var score = 0;
+    
 
 
     var play = function(game) {};
@@ -75,9 +76,12 @@ window.onload = function() {
         scoreText = this.add.text(10, 10, '', { font: '20px Arial', fill: '#fff' });
         updateScore(score);
 
+        //Create Top Score
+        topScore = localStorage.getItem(localStorageName) == null ? 0 : localStorage.getItem(localStorageName);
         
-        //this.topScore = localStorage.getItem(localStorageName) == null ? 0 : localStorageName.getItem(localStorageName);
-       
+        //topScore = 0
+        topScoreText = this.add.text(10, 35, '', { font: '20px Arial', fill: '#fff' });
+        updateTopScore(topScore);       
     },
         
         update:function(){
@@ -114,9 +118,12 @@ window.onload = function() {
     //Add Points
     function updateScore(inc){
         score += inc;
-        //scoreText.text = 'Score: ' + score + '\nBest: ' + topScore;
         scoreText.text = 'Score: ' + score;
     };
+
+    function updateTopScore(newTopScore){
+        topScoreText.text = 'Best: ' + newTopScore;
+    }
 
     //Add Tower
     function addtower(){
@@ -133,7 +140,8 @@ window.onload = function() {
     };
 
     function die(){
-        //localStorage.setItem(localStorageName, Math.max(score, topScore));
+        updateTopScore(score);
+        localStorage.setItem(localStorageName, Math.max(score, topScore));
         game.state.start("Play");	
     };
 
