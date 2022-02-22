@@ -1,3 +1,15 @@
+    
+    
+    window.onload = function() {
+        var game = new Phaser.Game(540,960 , Phaser.CANVAS);
+        game.state.add('Boot',HoppyHolden.Boot);
+        game.state.add('Preloader', HoppyHolden.Preloader);
+        game.state.add('StartMenu', HoppyHolden.StartMenu);
+        game.state.start('Boot');
+    }
+        
+
+/*
 window.onload = function() {
     var game = new Phaser.Game(320, 480, Phaser.CANVAS);
     var holden;
@@ -166,3 +178,4 @@ window.onload = function() {
     tower.prototype = Object.create(Phaser.Sprite.prototype);
     tower.prototype.constructor = tower;
 };
+*/
