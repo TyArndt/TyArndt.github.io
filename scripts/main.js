@@ -1,21 +1,95 @@
     
+    var config = {
+        type: Phaser.AUTO,
+        width: 320,
+        height: 480,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 800 },
+            }
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update,
+
+        }
+    };
+
+    var ground;
+    var logo;
+    var thrust = 300;
+    var game = new Phaser.Game(config);
     
-    window.onload = function() {
-        var game = new Phaser.Game(540,960 , Phaser.CANVAS);
-        game.state.add('Boot',HoppyHolden.Boot);
-        game.state.add('Preloader', HoppyHolden.Preloader);
-        game.state.add('StartMenu', HoppyHolden.StartMenu);
-        game.state.start('Boot');
-    }
+     function preload ()
+     {
+        this.load.setBaseURL('https://tyarndt.github.io/');
+         //Load Images
+         this.load.image("holden", "Head.png");
+         this.load.image("tower", "Tower.png");
+         this.load.image("bg", "BG.png");
+         this.load.image("beer", "beer.png");
+     }
+
+     function create ()
+     {
+         this.add.image(320, 200, 'bg');
+ 
+         
+         logo = this.physics.add.sprite(80, 240, 'holden');
+         
+         logo.setScale(0.15);
+         
+
+         
+         text = this.add.text(10, 10, '', { fill: '#00ff00' });
+
+         
+
+         
+
+     }
+
+     function update ()
+     {
+         
+        this.logo.body.stop();
         
 
+        var pointer = this.input.activePointer;
+        if (pointer.isDown)
+        {
+         
+            jump()
+        }
+
+        if(logo.y>=500){
+            
+            logo.setPosition(80,240)
+            logo.setVelocityY(0)
+        }
+
+
+        text.setText([
+            logo.y
+        ]);
+
+     }
+
+     function jump(){
+        logo.setVelocityY(-thrust)
+    };
+
+  
+
+
+ 
 /*
-window.onload = function() {
-    var game = new Phaser.Game(320, 480, Phaser.CANVAS);
-    var holden;
-    var bg;
-    var gravity = 800;
-    var speed = 125;
+
+    
+
+        var speed = 125;
     var thrust = 300;
     var tower = 300;
     var beer = 300;
@@ -25,7 +99,6 @@ window.onload = function() {
     var beerGroup;
     var localStorageName = 'HoldenHighScore';
     var score = 0;
-    
 
 
     var play = function(game) {};
