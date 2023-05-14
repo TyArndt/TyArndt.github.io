@@ -31,6 +31,9 @@ window.onload = function() {
             this.scale.pageAlignHorizontally = true;
             this.scale.pageAlignVertically = true;
             this.scale.setScreenSize(true);
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            this.game.scale.refresh();
 
             //Add Backgrounds
             bg = game.add.image(0,0,"bg");
@@ -56,22 +59,17 @@ window.onload = function() {
             //Actions
             game.input.onDown.add(jump, this);
             SPACEBAR = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            CONTROLKEY = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
+            CONTROLKEY.onDown.add(pause,self);
             SPACEBAR.onDown.add(jump,this);
             game.time.events.loop(towerInterval, addtower); 
-            addtower();
-
-            //Pause Stuff
-            pause_label = game.add.text( 250, 450, 'Pause', { font: '20px Arial', fill: '#fff' });
-            pause_label.inputEnabled = true;
-            pause_label.events.onInputUp.add(function () {
-                game.paused = true;            
-            });
-            game.input.onDown.add(unpause, self);
-            function unpause(event){
-                if(game.paused){
-                    game.paused = false;
-            }
-        }
+            addtower();           
+         
+        function pause(){
+                if(game.paused == false ){
+                    game.paused = true}
+                    else{ game.paused = false}
+                }
 
         //Create Score
         score = 0
@@ -102,7 +100,7 @@ window.onload = function() {
                 updateScore(1);
             });
 
-            speed = speed + (score * .02 )
+            speed = speed + (score * .007 )
 
 
             //Die if you fall off screen
