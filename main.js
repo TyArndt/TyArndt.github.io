@@ -100,7 +100,7 @@ window.onload = function() {
                 updateScore(1);
             });
 
-            speed = speed + (score * 02 )
+            speed = speed + (score * .02 )
 
 
             //Die if you fall off screen
