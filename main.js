@@ -55,6 +55,8 @@ window.onload = function() {
 
             //Actions
             game.input.onDown.add(jump, this);
+            SPACEBAR = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            SPACEBAR.onDown.add(jump,this);
             game.time.events.loop(towerInterval, addtower); 
             addtower();
 
