@@ -8,7 +8,7 @@ window.onload = function() {
     var tower = 300;
     var beer = 300;
     var towerInterval = 2000;
-    var towerHole = 120;
+    var towerHole = 145;
     var towerGroup;
     var beerGroup;
     var localStorageName = 'HoldenHighScore';
@@ -100,6 +100,9 @@ window.onload = function() {
                 updateScore(1);
             });
 
+            speed = speed + (score * 02 )
+
+
             //Die if you fall off screen
             if(holden.y>game.height){
                 die();
@@ -143,6 +146,7 @@ window.onload = function() {
         updateTopScore(score);
         localStorage.setItem(localStorageName, Math.max(score, topScore));
         game.state.start("Play");	
+        speed = 120
     };
 
 
