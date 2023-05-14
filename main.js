@@ -8,7 +8,7 @@ window.onload = function() {
     var tower = 300;
     var beer = 300;
     var towerInterval = 2000;
-    var towerHole = 145;
+    var towerHole = 160;
     var towerGroup;
     var beerGroup;
     var localStorageName = 'HoldenHighScore';
