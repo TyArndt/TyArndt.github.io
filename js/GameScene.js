@@ -19,7 +19,7 @@ class GameScene extends Phaser.Scene {
     this.scale.pageAlignVertically = true;
   
     //Add Backgrounds
-    this.background = this.add.tileSprite(800, 240, 1600, 600, 'background')
+    this.background = this.add.tileSprite(800, 240, 1600, 700, 'background')
 
     // Create player
     player = this.physics.add.sprite(50, 240, 'player').setOrigin(0, 0);
