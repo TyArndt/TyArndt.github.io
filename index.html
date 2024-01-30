@@ -1,20 +1,42 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style>
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
-}
-</style>
-</head>
-<title>Space Jumper</title>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Phaser 3 Template</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
 
-<body onload="startGame()">
-    <script src="phaser.min.js"></script>
-    <script src="main.js">
+    <style>
+      html,
+      body,
+      #game-container {
+        margin: 0;
+        padding: 0;
+      }
 
-</script>
-</body>
+      #game-container {
+        min-width: 100vw;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #game-container > canvas {
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="game-container"></div>
+
+    <script src="js/BootScene.js"></script>
+    <script src="js/GameScene.js"></script>
+        
+    <script src="./index.js"></script>
+  </body>
 </html>
+
+
