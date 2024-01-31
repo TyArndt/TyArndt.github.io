@@ -20,9 +20,9 @@ const config = {
 
 const game = new Phaser.Game(config);
 var global_scene_paused = false;
-var localStorageName = 'HoldenHighScore';
-var topScore;
+var gameover = false;
 var score = 0;
+var topScore;
 
 let player;
 let towers;

@@ -1,6 +1,6 @@
 class GameScene extends Phaser.Scene {
-  
-  
+
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -11,13 +11,13 @@ class GameScene extends Phaser.Scene {
     this.load.image('tower', 'images/tower.png');
     this.load.image('background', 'images/bg.png');
     this.load.image('beer', 'images/beer.png');
-    }
+  }
 
 
   create() {
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
-  
+
     //Add Backgrounds
     this.background = this.add.tileSprite(800, 240, 1600, 700, 'background')
 
@@ -35,7 +35,7 @@ class GameScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-SPACE', this.Jump);
 
     //Pause Stuff
-        const PauseButton = this.add.text(250, 450, 'Pause', { font: '15px Arial', color: 'white'})
+    const PauseButton = this.add.text(250, 450, 'Pause', { font: '15px Arial', color: 'white' })
       .setInteractive()
       .setDepth(1)
       .on('pointerdown', function () {
@@ -52,44 +52,48 @@ class GameScene extends Phaser.Scene {
     });
 
     //Score Stuff
-    this.score = 0
-    var scoreText = this.add.text(10, 10, 'SCORE: ' + this.score, { font: '15px Arial', fill: 'white', backgroundColor: 'black'  })
-    .setDepth(1);
-    
-    this.topScore = localStorage.getItem(this.localStorageName) == null ? 0 : localStorage.getItem(this.localStorageName);
-    
-    var topScoreText = this.add.text(10, 27, 'BEST: ' + this.topScore, { font: '15px Arial', fill: 'white', backgroundColor: 'black'  })
-    .setDepth(1);
-    
+    score = 0;
+    var scoreText;
+    var topScoreText;
+
+    scoreText = this.add.text(10, 10, 'SCORE: ' + 0, { font: '15px Arial', fill: 'white', backgroundColor: 'black' })
+      .setDepth(1);
+
+    topScore = parseInt(localStorage.getItem('score')) || 0;
+    console.log(topScore)
+
+
+    topScoreText = this.add.text(10, 27, 'BEST: ' + topScore, { font: '15px Arial', fill: 'white', backgroundColor: 'black' })
+      .setDepth(1);
+
     // Check for collisions, gameover if true
-    this.physics.add.collider(player, towers, this.gameOver, null, this);
+    this.physics.add.collider(player, towers, function () {
+      this.gameOver = true;
+    }, null, this);
 
-    this.physics.add.overlap(player, beers, function(){
-      beers.remove(beers.getFirst(true),true);
-      console.log(this.score)
-      this.score += 1
-      scoreText.text = 'SCORE: ' + this.score;
+
+    this.physics.add.overlap(player, beers, function () {
+      beers.remove(beers.getFirst(true), true);
+      score += 1;
+      scoreText.setText('Score: ' + score);
     });
-
-  
   }
 
   update() {
+    if (this.gameOver) {
+      this.gameOver = false;
+      localStorage.setItem('score', Math.max(score, topScore));
+      this.scene.restart();
+    }
     // Check to see if player is off the screen, if it is restart game
     if (player.getBounds().bottom >= config.height || player.getBounds().top <= 0) {
-      this.gameOver(this.score,this.topScore);
+      this.gameOver = true;
     }
 
     this.background.tilePositionX += 2;
 
   }
 
-  gameOver() {
-    // Handle game over logic (e.g., show score, restart game)
-    console.log(this.score, this.topScore)
-    localStorage.setItem(localStorageName, Math.max(this.score, this.topScore));
-    this.scene.restart();
-  }
 
   Jump() {
     // Make the player jump
@@ -106,7 +110,7 @@ class GameScene extends Phaser.Scene {
     const Beer = beers.create(340, TowerY, 'beer')
 
     // Enable collisions for towers
-    this.physics.world.enable([upperTower, lowerTower,Beer]);
+    this.physics.world.enable([upperTower, lowerTower, Beer]);
 
     // Set velocity for towers
     upperTower.body.velocity.x = -150;
