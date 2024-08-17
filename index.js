@@ -26,7 +26,7 @@ var topScore;
 
 let player;
 let towers;
-let beers;
+let rootbeers;
 
 document.addEventListener('pointerdown', function(event) {
   if( global_scene_paused == true) {

@@ -10,7 +10,7 @@ class GameScene extends Phaser.Scene {
     this.load.image('player', 'images/player.png');
     this.load.image('tower', 'images/tower.png');
     this.load.image('background', 'images/bg.png');
-    this.load.image('beer', 'images/beer.png');
+    this.load.image('rootbeer', 'images/rootbeer.png');
   }
 
 
@@ -28,7 +28,7 @@ class GameScene extends Phaser.Scene {
 
     // Create tower group
     towers = this.physics.add.group();
-    beers = this.physics.add.group();
+    rootbeers = this.physics.add.group();
 
     // Set up input
     this.input.on('pointerdown', this.Jump);
@@ -43,7 +43,7 @@ class GameScene extends Phaser.Scene {
         this.scene.pause()
       }, this);
 
-    // Spawn tower/beer
+    // Spawn tower/rootbeer
     this.time.addEvent({
       delay: 1500,
       callback: this.spawn,
@@ -72,10 +72,10 @@ class GameScene extends Phaser.Scene {
     }, null, this);
 
 
-    this.physics.add.overlap(player, beers, function () {
-      beers.remove(beers.getFirst(true), true);
+    this.physics.add.overlap(player, rootbeers, function () {
+      rootbeers.remove(rootbeers.getFirst(true), true);
       score += 1;
-      scoreText.setText('Score: ' + score);
+      scoreText.setText('SCORE: ' + score);
     });
   }
 
@@ -104,22 +104,22 @@ class GameScene extends Phaser.Scene {
     const Gap = 160;
     const TowerY = Phaser.Math.Between(50, 480 - Gap);
     const upperTower = towers.create(320, TowerY - Gap / 2, 'tower').setOrigin(0, 1);
-    upperTower.scaleX = .70
+    upperTower.scaleX = .70;
     const lowerTower = towers.create(320, TowerY + Gap / 2, 'tower').setOrigin(0, 0);
-    lowerTower.scaleX = .70
-    const Beer = beers.create(340, TowerY, 'beer')
+    lowerTower.scaleX = .70;
+    const rootbeer = rootbeers.create(340, TowerY, 'rootbeer');
 
     // Enable collisions for towers
-    this.physics.world.enable([upperTower, lowerTower, Beer]);
+    this.physics.world.enable([upperTower, lowerTower, rootbeer]);
 
     // Set velocity for towers
-    upperTower.body.velocity.x = -150;
-    lowerTower.body.velocity.x = -150;
-    Beer.body.velocity.x = -150;
+    upperTower.body.velocity.x = -150 - (score * 5);
+    lowerTower.body.velocity.x = -150 - (score * 5);
+    rootbeer.body.velocity.x = -150 - (score * 5);
 
     upperTower.body.setAllowGravity(false);
     lowerTower.body.setAllowGravity(false);
-    Beer.body.setAllowGravity(false);
+    rootbeer.body.setAllowGravity(false);
 
   }
 }
