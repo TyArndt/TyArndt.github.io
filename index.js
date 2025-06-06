@@ -1,3 +1,4 @@
+
 // Ensure the Phaser game is initialized correctly
 const config = {
   type: Phaser.AUTO,
@@ -5,10 +6,13 @@ const config = {
   height: 480,
   backgroundColor: '#222222',
   parent: 'game-container',
-  scene: [BootScene, GameScene], // Ensure your scene names match
+  dom: {
+    createContainer: true  // <- this is required for HTML input fields
+  },
+  scene: [BootScene,TitleScene, GameScene], // Ensure your scene names match
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    
   },
   physics: {
     default: 'arcade',

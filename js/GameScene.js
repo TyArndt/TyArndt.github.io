@@ -12,11 +12,11 @@ class GameScene extends Phaser.Scene {
 
   create() {
     // Add background
-    this.background = this.add.tileSprite(800, 240, 1600, 700, 'background');
-
+    this.background = this.add.tileSprite(0, 240, 0, 0, 'background');
+    
     // Create player
     GameState.player = this.physics.add.sprite(50, 240, 'player').setOrigin(0, 0);
-    GameState.player.setScale(0.05);
+    
 
     // Create groups
     GameState.towers = this.physics.add.group();
@@ -34,6 +34,11 @@ class GameScene extends Phaser.Scene {
         GameState.scenePaused = true;
         this.scene.pause();
       });
+
+          this.input.keyboard.on('keydown-ESC', () => {
+        this.scene.start('TitleScene');
+       
+    });
 
     // Score
     GameState.score = 0;
@@ -86,7 +91,7 @@ class GameScene extends Phaser.Scene {
       GameState.gameOver = true;
     }
 
-    this.background.tilePositionX += 2;
+    this.background.tilePositionX += .7 ;
   }
 
   jump() {
@@ -97,14 +102,14 @@ class GameScene extends Phaser.Scene {
 
   spawn() {
     const gap = 160;
-    const towerY = Phaser.Math.Between(50, 480 - gap);
+    const towerY = Phaser.Math.Between(75, 420 - gap);
     
-    const upper = GameState.towers.create(320, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(0.7);
-    const lower = GameState.towers.create(320, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(0.7);
-    const beer = GameState.beers.create(340, towerY, 'beer');
+    const upper = GameState.towers.create(350, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(1);
+    const lower = GameState.towers.create(350, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(1);
+    const beer = GameState.beers.create(382, towerY, 'beer');
 
     [upper, lower, beer].forEach(obj => {
-      obj.body.setVelocityX(-150);
+      obj.body.setVelocityX(-250-(GameState.score*2));
       obj.body.setAllowGravity(false);
     });
   }
