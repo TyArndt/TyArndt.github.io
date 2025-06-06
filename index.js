@@ -1,36 +1,42 @@
+// Ensure the Phaser game is initialized correctly
 const config = {
   type: Phaser.AUTO,
   width: 320,
   height: 480,
-  backgroundColor: "#222222",
-  parent: "game-container",
-  scene: [BootScene, GameScene],
+  backgroundColor: '#222222',
+  parent: 'game-container',
+  scene: [BootScene, GameScene], // Ensure your scene names match
   scale: {
     mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   physics: {
     default: 'arcade',
     arcade: {
       gravity: { y: 900 },
-      debug: false,
-    },
+      debug: false
+    }
   }
 };
 
-
+// Initialize the Phaser game instance
 const game = new Phaser.Game(config);
-var global_scene_paused = false;
-var gameover = false;
-var score = 0;
-var topScore;
 
-let player;
-let towers;
-let rootbeers;
+// Global game state management
+const GameState = {
+  scenePaused: false,
+  gameOver: false,
+  score: 0,
+  topScore: 0,
+  player: null,
+  towers: null,
+  beers: null
+};
 
-document.addEventListener('pointerdown', function(event) {
-  if( global_scene_paused == true) {
-      game.scene.resume('GameScene');
-      global_scene_paused = false;
+// Event listener to resume the game when clicked (if paused)
+document.addEventListener('pointerdown', () => {
+  if (GameState.scenePaused === true) {
+    game.scene.resume('GameScene');
+    GameState.scenePaused = false;
   }
 });
