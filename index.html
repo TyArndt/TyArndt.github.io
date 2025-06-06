@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Holden's Rootbeer Float</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Phaser 3 Game</title>
 
-    <style>
-      html,
-      body {background-color:black}
-      #game-container {
-        margin: 0;
-        padding: 0;
-      }
+  <!-- Phaser 3.55.2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js" defer></script>
 
-      #game-container {
-        min-width: 100vw;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  <!-- Game Styles -->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #111; /* optional: dark background for contrast */
+    }
 
-      #game-container > canvas {
-        border-radius: 5px;
-        }        
-    </style>
-  </head>
+    #game-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-  <body>
-    <div id="game-container"></div>
+    canvas {
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* optional: styling */
+    }
+  </style>
+</head>
 
-    <script src="js/BootScene.js"></script>
-    <script src="js/GameScene.js"></script>
-        
-    <script src="./index.js"></script>
-  </body>
+<body>
+  <div id="game-container"></div>
+
+  <!-- Game Scenes -->
+  <script src="js/BootScene.js" defer></script>
+  <script src="js/GameScene.js" defer></script>
+
+  <!-- Game Entry Point -->
+  <script src="index.js" defer></script>
+</body>
 </html>
-
-
