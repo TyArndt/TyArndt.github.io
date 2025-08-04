@@ -14,7 +14,7 @@ class GameScene extends Phaser.Scene {
     
     const player = data.player || 'Player';
 
-    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white',backgroundColor: 'black' }).setDepth(1)
+    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white', backgroundColor: 'black' }).setDepth(1)
     
 
     // Add background
@@ -88,7 +88,10 @@ class GameScene extends Phaser.Scene {
   update() {
     if (GameState.gameOver) {
       GameState.gameOver = false;
-      if (GameState.score > GameState.topScore) {localStorage.setItem('score', GameState.score)};
+      if (GameState.score > GameState.topScore) {
+        GameState.topScore = GameState.score;
+        localStorage.setItem('score', GameState.topScore);
+      }
       this.scene.restart();
     }
 
