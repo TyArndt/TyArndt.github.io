@@ -21,7 +21,7 @@ class GameScene extends Phaser.Scene {
 
     // Create groups
     GameState.towers = this.physics.add.group();
-    GameState.beers = this.physics.add.group();
+    GameState.rootbeers = this.physics.add.group();
 
     // Input
     this.input.on('pointerdown', () => this.jump());
@@ -62,16 +62,16 @@ class GameScene extends Phaser.Scene {
       GameState.gameOver = true;
     }, null, this);
 
-    this.physics.add.overlap(GameState.player, GameState.beers, () => {
-      const beer = GameState.beers.getFirstAlive();
-      if (beer) {
-        beer.destroy();
+    this.physics.add.overlap(GameState.player, GameState.rootbeers, () => {
+      const rootbeer = GameState.rootbeers.getFirstAlive();
+      if (rootbeer) {
+        rootbeer.destroy();
         GameState.score += 1;
         this.scoreText.setText('SCORE: ' + GameState.score);
       }
     });
 
-    // Spawn towers and beer
+    // Spawn towers and rootbeer
     this.time.addEvent({
       delay: 1500,
       callback: this.spawn,
@@ -107,9 +107,9 @@ class GameScene extends Phaser.Scene {
     
     const upper = GameState.towers.create(350, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(1);
     const lower = GameState.towers.create(350, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(1);
-    const beer = GameState.beers.create(382, towerY, 'beer');
+    const rootbeer = GameState.rootbeers.create(382, towerY, 'rootbeer');
 
-    [upper, lower, beer].forEach(obj => {
+    [upper, lower, rootbeer].forEach(obj => {
       obj.body.setVelocityX(-250-(GameState.score*2));
       obj.body.setAllowGravity(false);
     });

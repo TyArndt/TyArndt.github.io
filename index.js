@@ -32,7 +32,7 @@ const GameState = {
   topScore: 0,
   player: null,
   towers: null,
-  beers: null,
+  rootbeers: null,
   username: null
 };
 
