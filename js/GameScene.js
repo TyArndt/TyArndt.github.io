@@ -3,21 +3,21 @@ class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
   }
 
-  preload() {}
+  preload() { }
 
   create(data) {
-    
+
     const player = data.player || 'Player';
 
-    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white',backgroundColor: 'black' }).setDepth(1)
-    
+    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white', backgroundColor: 'black' }).setDepth(1)
+
 
     // Add background
     this.background = this.add.tileSprite(0, 240, 0, 0, 'background');
-    
+
     // Create player
     GameState.player = this.physics.add.sprite(50, 240, 'player').setOrigin(0, 0);
-    
+
 
     // Create groups
     GameState.towers = this.physics.add.group();
@@ -36,9 +36,9 @@ class GameScene extends Phaser.Scene {
         this.scene.pause();
       });
 
-          this.input.keyboard.on('keydown-ESC', () => {
-        this.scene.start('TitleScene');
-       
+    this.input.keyboard.on('keydown-ESC', () => {
+      this.scene.start('TitleScene');
+
     });
 
     // Score
@@ -83,7 +83,7 @@ class GameScene extends Phaser.Scene {
   update() {
     if (GameState.gameOver) {
       GameState.gameOver = false;
-      if (GameState.score > GameState.topScore) {localStorage.setItem('score', GameState.score)};
+      if (GameState.score > GameState.topScore) { localStorage.setItem('score', GameState.score) };
       this.scene.restart();
     }
 
@@ -92,7 +92,7 @@ class GameScene extends Phaser.Scene {
       GameState.gameOver = true;
     }
 
-    this.background.tilePositionX += .7 ;
+    this.background.tilePositionX += .7;
   }
 
   jump() {
@@ -104,13 +104,13 @@ class GameScene extends Phaser.Scene {
   spawn() {
     const gap = 160;
     const towerY = Phaser.Math.Between(75, 420 - gap);
-    
+
     const upper = GameState.towers.create(350, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(1);
     const lower = GameState.towers.create(350, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(1);
     const rootbeer = GameState.rootbeers.create(382, towerY, 'rootbeer');
 
     [upper, lower, rootbeer].forEach(obj => {
-      obj.body.setVelocityX(-250-(GameState.score*2));
+      obj.body.setVelocityX(-250 - (GameState.score * 2));
       obj.body.setAllowGravity(false);
     });
   }
