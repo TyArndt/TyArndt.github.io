@@ -3,9 +3,7 @@ class TitleScene extends Phaser.Scene {
     super({ key: 'TitleScene' });
   }
 
-  preload() {
-    // Assets are now loaded in BootScene for better performance
-  }
+  preload() {}
 
   create() {
     const centerX = this.game.config.width / 2;
@@ -27,16 +25,17 @@ class TitleScene extends Phaser.Scene {
       padding: { x: 10, y: 5 } 
     }).setDepth(1);
 
-    // Create DOM input element and store it
-    const input = this.add.dom(160, 400, 'input', {
+        const input = this.add.dom(75, 285, 'input', {
       type: 'text',
       name: 'player',
       fontSize: '20px',
+      position: 'fixed',
       width: '200px',
-      padding: '5px',
+      padding: '3px',
       border: '1px solid #888'
     });
     
+    input.node.style.textAlign = 'center';
     
     this.domElements.push(input);
 
@@ -75,7 +74,6 @@ class TitleScene extends Phaser.Scene {
   }
   
   shutdown() {
-    // Clean up DOM elements to prevent memory leaks
     if (this.domElements) {
       this.domElements.forEach(element => {
         if (element && element.node) {

@@ -5,7 +5,6 @@ class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Load all game assets here for better performance
     this.load.image('player', 'images/player.png');
     this.load.image('tower', 'images/tower.png');
     this.load.image('background', 'images/bg.png');

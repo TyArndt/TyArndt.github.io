@@ -38,8 +38,8 @@ const GameState = {
 
 // Event listener to resume the game when clicked (if paused)
 // Only active when GameScene is running to avoid conflicts
-document.addEventListener('pointerdown', (event) => {
-  if (GameState.scenePaused === true && game.scene.isActive('GameScene') && !event.target.closest('input, button')) {
+document.addEventListener('pointerdown', () => {
+  if (GameState.scenePaused === true) {
     game.scene.resume('GameScene');
     GameState.scenePaused = false;
   }

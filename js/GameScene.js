@@ -3,18 +3,13 @@ class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
   }
 
-  preload() {
-    // Assets are now loaded in BootScene for better performance
-  }
+  preload() {}
 
   create(data) {
-    // Store event listeners for cleanup
     this.eventListeners = [];
     
-    // Reset pause state
     GameState.scenePaused = false;
     
-    // Initialize/reset object pools for better performance
     this.towerPool = [];
     this.rootbeerPool = [];
     
@@ -30,8 +25,6 @@ class GameScene extends Phaser.Scene {
 
     this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white', backgroundColor: 'black' }).setDepth(1);
     
-
-    // Add background - properly sized and positioned
     this.background = this.add.tileSprite(this.game.config.width / 2, this.game.config.height / 2, 
                                         this.game.config.width, this.game.config.height, 'background');
     
@@ -43,14 +36,12 @@ class GameScene extends Phaser.Scene {
     GameState.towers = this.physics.add.group();
     GameState.rootbeers = this.physics.add.group();
 
-    // Input - store references for cleanup
     const pointerHandler = () => this.jump();
     const spaceHandler = () => this.jump();
     this.input.on('pointerdown', pointerHandler);
     this.input.keyboard.on('keydown-SPACE', spaceHandler);
     this.eventListeners.push(['pointerdown', pointerHandler], ['keydown-SPACE', spaceHandler]);
 
-    // Pause Button - position relative to game width
     this.add.text(this.game.config.width - 80, this.game.config.height - 30, 'Pause', { 
       font: '15px Arial', 
       color: 'white', 
@@ -70,7 +61,6 @@ class GameScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-ESC', escHandler);
     this.eventListeners.push(['keydown-ESC', escHandler]);
 
-    // Score and deaths
     GameState.score = 0;
     GameState.topScore = parseInt(localStorage.getItem('score')) || 0;
     GameState.deaths = parseInt(localStorage.getItem('deaths')) || 0;
@@ -92,11 +82,16 @@ class GameScene extends Phaser.Scene {
       fill: 'white',
       backgroundColor: 'black'
     }).setDepth(1);
+    
+    this.deathText.setText('DEATHS: ' + GameState.deaths);
 
     // Collisions
     this.physics.add.collider(GameState.player, GameState.towers, () => {
-      GameState.gameOver = true;
-      GameState.deaths += 1;
+      if (!GameState.gameOver) {
+        GameState.gameOver = true;
+        GameState.deaths += 1;
+        this.deathText.setText('DEATHS: ' + GameState.deaths);
+      }
     }, null, this);
 
     this.physics.add.overlap(GameState.player, GameState.rootbeers, (player, rootbeer) => {
@@ -117,18 +112,6 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  shutdown() {
-    // Clean up event listeners to prevent memory leaks
-    this.eventListeners.forEach(([event, handler]) => {
-      if (event.startsWith('keydown-')) {
-        this.input.keyboard.off(event, handler);
-      } else {
-        this.input.off(event, handler);
-      }
-    });
-    this.eventListeners = [];
-  }
-
   update() {
     if (GameState.gameOver) {
       GameState.gameOver = false;
@@ -138,13 +121,29 @@ class GameScene extends Phaser.Scene {
       }
       // Save deaths to localStorage
       localStorage.setItem('deaths', GameState.deaths);
-      this.scene.restart();
+      
+      // Add small delay to prevent freeze during restart
+      this.time.delayedCall(100, () => {
+        this.scene.restart();
+      });
+      return; // Exit update loop early to prevent further processing
     }
 
-    const playerBounds = GameState.player.getBounds();
-    if (playerBounds.bottom >= this.game.config.height || playerBounds.top <= 0) {
-      GameState.gameOver = true;
-      GameState.deaths += 1;
+    if (GameState.player && GameState.player.active && !GameState.gameOver) {
+      try {
+        const playerBounds = GameState.player.getBounds();
+        if (playerBounds && (playerBounds.bottom >= this.game.config.height || playerBounds.top <= 0)) {
+          GameState.gameOver = true;
+          GameState.deaths += 1;
+          this.deathText.setText('DEATHS: ' + GameState.deaths);
+        }
+      } catch (error) {
+        console.warn('Error checking player bounds:', error);
+        // If bounds check fails, assume player is dead
+        GameState.gameOver = true;
+        GameState.deaths += 1;
+        this.deathText.setText('DEATHS: ' + GameState.deaths);
+      }
     }
 
     this.background.tilePositionX += 0.7;
