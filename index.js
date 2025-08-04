@@ -4,8 +4,11 @@ const config = {
   width: 320,
   height: 480,
   backgroundColor: '#222222',
-  parent: 'game-container',
-  scene: [BootScene, GameScene], // Ensure your scene names match
+  parent: 'game',
+  dom: {
+    createContainer: true  // <- this is required for HTML input fields
+  },
+  scene: [BootScene, TitleScene, GameScene], // Ensure your scene names match
   scale: {
     mode: Phaser.Scale.FIT,
   },
@@ -29,7 +32,8 @@ const GameState = {
   topScore: 0,
   player: null,
   towers: null,
-  beers: null
+  beers: null,
+  username: null
 };
 
 // Event listener to resume the game when clicked (if paused)

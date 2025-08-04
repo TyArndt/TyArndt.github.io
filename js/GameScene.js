@@ -10,7 +10,13 @@ class GameScene extends Phaser.Scene {
     this.load.image('beer', 'images/rootbeer.png');
   }
 
-  create() {
+  create(data) {
+    
+    const player = data.player || 'Player';
+
+    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white',backgroundColor: 'black' }).setDepth(1)
+    
+
     // Add background
     this.background = this.add.tileSprite(0, 240, 0, 0, 'background');
     
@@ -27,7 +33,7 @@ class GameScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-SPACE', () => this.jump());
 
     // Pause Button
-    this.add.text(250, 450, 'Pause', { font: '15px Arial', color: 'white' })
+    this.add.text(250, 450, 'Pause', { font: '15px Arial', color: 'white', backgroundColor: 'black' })
       .setInteractive()
       .setDepth(1)
       .on('pointerdown', () => {
@@ -44,13 +50,13 @@ class GameScene extends Phaser.Scene {
     GameState.score = 0;
     GameState.topScore = parseInt(localStorage.getItem('score')) || 0;
 
-    this.scoreText = this.add.text(10, 10, 'SCORE: 0', {
+    this.scoreText = this.add.text(0, 16, 'SCORE: 0', {
       font: '15px Arial',
       fill: 'white',
       backgroundColor: 'black'
     }).setDepth(1);
 
-    this.topScoreText = this.add.text(10, 27, 'BEST: ' + GameState.topScore, {
+    this.topScoreText = this.add.text(0, 32, 'BEST: ' + GameState.topScore, {
       font: '15px Arial',
       fill: 'white',
       backgroundColor: 'black'
@@ -82,7 +88,7 @@ class GameScene extends Phaser.Scene {
   update() {
     if (GameState.gameOver) {
       GameState.gameOver = false;
-      localStorage.setItem('score', Math.max(GameState.score, GameState.topScore));
+      if (GameState.score > GameState.topScore) {localStorage.setItem('score', GameState.score)};
       this.scene.restart();
     }
 
