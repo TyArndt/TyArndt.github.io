@@ -25,7 +25,8 @@ class TitleScene extends Phaser.Scene {
       padding: { x: 10, y: 5 } 
     }).setDepth(1);
 
-        const input = this.add.dom(75, 285, 'input', {
+    // Create DOM input element and store it
+    const input = this.add.dom(110, 320, 'input', {
       type: 'text',
       name: 'player',
       fontSize: '20px',
@@ -33,11 +34,13 @@ class TitleScene extends Phaser.Scene {
       width: '200px',
       padding: '3px',
       border: '1px solid #888'
-    });
+    }).setOrigin(0.5);
     
-    input.node.style.textAlign = 'center';
+    // Append to the game div
+    document.getElementById('game').appendChild(input.node);
+     input.node.style.textAlign = 'center';
+
     
-    this.domElements.push(input);
 
     const startButton = this.add.text(160, 440, 'Start Game', {
       font: '20px Arial',
