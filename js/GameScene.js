@@ -10,9 +10,6 @@ class GameScene extends Phaser.Scene {
     
     GameState.scenePaused = false;
     
-    this.towerPool = [];
-    this.rootbeerPool = [];
-    
     // Clear any existing objects from previous runs
     if (GameState.towers) {
       GameState.towers.clear(true, true);
@@ -120,13 +117,8 @@ class GameScene extends Phaser.Scene {
         localStorage.setItem('score', GameState.topScore);
       }
       // Save deaths to localStorage
-      localStorage.setItem('deaths', GameState.deaths);
-      
-      // Add small delay to prevent freeze during restart
-      this.time.delayedCall(100, () => {
+      localStorage.setItem('deaths', GameState.deaths);     
         this.scene.restart();
-      });
-      return; // Exit update loop early to prevent further processing
     }
 
     if (GameState.player && GameState.player.active && !GameState.gameOver) {
@@ -134,8 +126,6 @@ class GameScene extends Phaser.Scene {
         const playerBounds = GameState.player.getBounds();
         if (playerBounds && (playerBounds.bottom >= this.game.config.height || playerBounds.top <= 0)) {
           GameState.gameOver = true;
-          GameState.deaths += 1;
-          this.deathText.setText('DEATHS: ' + GameState.deaths);
         }
       } catch (error) {
         console.warn('Error checking player bounds:', error);
@@ -148,17 +138,7 @@ class GameScene extends Phaser.Scene {
 
     this.background.tilePositionX += 0.7;
     
-    // Clean up off-screen objects for pooling (optimized)
-    if (this.towerPool.length > 0 || this.rootbeerPool.length > 0) {
-      [...this.towerPool, ...this.rootbeerPool].forEach(obj => {
-        if (obj && obj.active && obj.x < -100) {
-          obj.setActive(false).setVisible(false);
-          if (obj.body) {
-            obj.body.setVelocityX(0);
-          }
-        }
-      });
-    }
+
   }
 
   jump() {
@@ -167,95 +147,21 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  getPooledTower() {
-    // More efficient pooling - find first inactive object
-    for (let i = 0; i < this.towerPool.length; i++) {
-      if (!this.towerPool[i].active) {
-        return this.towerPool[i];
-      }
-    }
-    return null;
-  }
-  
-  getPooledRootbeer() {
-    // More efficient pooling - find first inactive object
-    for (let i = 0; i < this.rootbeerPool.length; i++) {
-      if (!this.rootbeerPool[i].active) {
-        return this.rootbeerPool[i];
-      }
-    }
-    return null;
-  }
 
-  resetPooledObject(obj, x, y) {
-    // Properly reset all object properties
-    obj.setPosition(x, y)
-       .setActive(true)
-       .setVisible(true)
-       .setScale(1)
-       .setRotation(0);
-    
-    // Reset physics body
-    if (obj.body) {
-      obj.body.setVelocityX(0);
-      obj.body.setVelocityY(0);
-      obj.body.setAllowGravity(false);
-    }
-  }
 
   spawn() {
     const gap = 160;
     const towerY = Phaser.Math.Between(75, 420 - gap);
     const speed = -250 - (GameState.score * 2);
-    
-    // Try to reuse pooled objects, create new ones if needed
-    let upper = this.getPooledTower();
-    if (upper) {
-      this.resetPooledObject(upper, 350, towerY - gap / 2);
-    } else {
-      upper = GameState.towers.create(350, towerY - gap / 2, 'tower');
-      if (upper) {
-        this.towerPool.push(upper);
-      } else {
-        console.warn('Failed to create upper tower');
-        return;
-      }
-    }
-    upper.setOrigin(0, 1);
-    
-    let lower = this.getPooledTower();
-    if (lower) {
-      this.resetPooledObject(lower, 350, towerY + gap / 2);
-    } else {
-      lower = GameState.towers.create(350, towerY + gap / 2, 'tower');
-      if (lower) {
-        this.towerPool.push(lower);
-      } else {
-        console.warn('Failed to create lower tower');
-        return;
-      }
-    }
-    lower.setOrigin(0, 0);
-    
-    let rootbeer = this.getPooledRootbeer();
-    if (rootbeer) {
-      this.resetPooledObject(rootbeer, 382, towerY);
-    } else {
-      rootbeer = GameState.rootbeers.create(382, towerY, 'rootbeer');
-      if (rootbeer) {
-        this.rootbeerPool.push(rootbeer);
-      } else {
-        console.warn('Failed to create rootbeer');
-        return;
-      }
-    }
 
-    // Set velocity and physics for all objects
-    [upper, lower, rootbeer].forEach(obj => {
-      if (obj && obj.body) {
-        obj.body.setVelocityX(speed);
-        obj.body.setAllowGravity(false);
-      }
-    });
+    const upper = GameState.towers.create(350, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(1);
+    const lower = GameState.towers.create(350, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(1);
+    const beer = GameState.beers.create(382, towerY, 'beer');
+
+    
+    [upper, lower, beer].forEach(obj => {
+      obj.body.setVelocityX(-250-(GameState.score*2));
+      obj.body.setAllowGravity(false);    
+          });
   }
 }
