@@ -20,7 +20,12 @@ class TitleScene extends Phaser.Scene {
       this.add.rectangle(centerX, centerY, this.game.config.width, this.game.config.height, 0x222222);
     }
 
-    this.add.text(100, 345, `Enter Name`, { font: '20px Arial', color: '#FAECCC',backgroundColor: '#381C12',padding: { x: 10, y: 5 } }).setDepth(1)
+    this.add.text(100, 345, 'Enter Name', { 
+      font: '20px Arial', 
+      color: '#FAECCC', 
+      backgroundColor: '#381C12', 
+      padding: { x: 10, y: 5 } 
+    }).setDepth(1);
 
     // Create DOM input element and store it
     const input = this.add.dom(160, 400, 'input', {
