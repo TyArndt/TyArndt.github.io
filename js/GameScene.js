@@ -3,12 +3,7 @@ class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
   }
 
-  preload() {
-    this.load.image('player', 'images/player.png');
-    this.load.image('tower', 'images/tower.png');
-    this.load.image('background', 'images/bg.png');
-    this.load.image('beer', 'images/rootbeer.png');
-  }
+  preload() {}
 
   create(data) {
     

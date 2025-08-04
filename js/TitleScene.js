@@ -12,14 +12,20 @@ this.title_background = this.add.tileSprite(160, 240, 0, 0, 'title_background');
   this.add.text(100, 345, `Enter Name`, { font: '20px Arial', color: '#FAECCC',backgroundColor: '#381C12',padding: { x: 10, y: 5 } }).setDepth(1)
 
     // Create DOM input element and store it
-    const input = this.add.dom(160, 400, 'input', {
+    const input = this.add.dom(110, 320, 'input', {
       type: 'text',
       name: 'player',
       fontSize: '20px',
       width: '200px',
       padding: '5px',
       border: '1px solid #888'
-    });
+    }).setOrigin(0.5);
+    
+    // Append to the game div
+    document.getElementById('game').appendChild(input.node);
+     input.node.style.textAlign = 'center';
+
+    
 
     const startButton = this.add.text(160, 440, 'Start Game', {
       font: '20px Arial',

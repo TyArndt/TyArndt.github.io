@@ -4,7 +4,17 @@ class BootScene extends Phaser.Scene {
     super({ key: "BootScene" });
   }
 
-  preload() {}
+  preload() {
+    this.load.image('player', 'images/player.png');
+    this.load.image('tower', 'images/tower.png');
+    this.load.image('background', 'images/bg.png');
+    this.load.image('rootbeer', 'images/rootbeer.png');
+    this.load.image('title_background', 'images/title_bg.png');
+    
+    this.load.on('loaderror', (file) => {
+      console.warn(`Failed to load asset: ${file.key} from ${file.url}`);
+    });
+  }
 
   create() {
     this.scene.start("TitleScene");
