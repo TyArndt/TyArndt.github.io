@@ -11,22 +11,19 @@ class TitleScene extends Phaser.Scene {
     const centerX = this.game.config.width / 2;
     const centerY = this.game.config.height / 2;
     
+    // Store DOM elements for cleanup
+    this.domElements = [];
+
     if (this.textures.exists('title_background')) {
       this.title_background = this.add.tileSprite(centerX, centerY, 0, 0, 'title_background');
     } else {
       this.add.rectangle(centerX, centerY, this.game.config.width, this.game.config.height, 0x222222);
     }
 
-
-    this.add.text(centerX, 345, 'Enter Name', { 
-      font: '20px Arial', 
-      color: '#FAECCC', 
-      backgroundColor: '#381C12', 
-      padding: { x: 10, y: 5 } 
-    }).setOrigin(0.5).setDepth(1);
+    this.add.text(100, 345, `Enter Name`, { font: '20px Arial', color: '#FAECCC',backgroundColor: '#381C12',padding: { x: 10, y: 5 } }).setDepth(1)
 
     // Create DOM input element and store it
-    const input = this.add.dom(centerX, 400, 'input', {
+    const input = this.add.dom(160, 400, 'input', {
       type: 'text',
       name: 'player',
       fontSize: '20px',
@@ -34,14 +31,16 @@ class TitleScene extends Phaser.Scene {
       padding: '5px',
       border: '1px solid #888'
     });
+    
+    
+    this.domElements.push(input);
 
-    const startButton = this.add.text(centerX, 440, 'Start Game', {
+    const startButton = this.add.text(160, 440, 'Start Game', {
       font: '20px Arial',
       backgroundColor: '#381C12',
       color: '#FAECCC',
       padding: { x: 10, y: 5 },
     }).setOrigin(0.5).setInteractive();
-
 
     // Access the actual HTML element with input.node
     const getplayer = () => {
@@ -60,8 +59,6 @@ class TitleScene extends Phaser.Scene {
     startButton.on('pointerdown', startGame);
 
     this.input.keyboard.on('keydown-ENTER', startGame);
-  
-
 
     startButton.on('pointerover', () => {
       startButton.setStyle({ backgroundColor: '#FAECCC', color: '#381C12' }); // highlight
@@ -70,5 +67,18 @@ class TitleScene extends Phaser.Scene {
     startButton.on('pointerout', () => {
       startButton.setStyle({ backgroundColor: '#381C12', color: '#FAECCC' }); // reset
     });
-}
+  }
+  
+  shutdown() {
+    // Clean up DOM elements to prevent memory leaks
+    if (this.domElements) {
+      this.domElements.forEach(element => {
+        if (element && element.node) {
+          element.removeFromDisplayList();
+          element.destroy();
+        }
+      });
+      this.domElements = [];
+    }
+  }
 }

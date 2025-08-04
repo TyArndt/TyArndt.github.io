@@ -30,14 +30,16 @@ const GameState = {
   gameOver: false,
   score: 0,
   topScore: 0,
+  deaths: 0,
   player: null,
   towers: null,
   rootbeers: null
 };
 
 // Event listener to resume the game when clicked (if paused)
-document.addEventListener('pointerdown', () => {
-  if (GameState.scenePaused === true) {
+// Only active when GameScene is running to avoid conflicts
+document.addEventListener('pointerdown', (event) => {
+  if (GameState.scenePaused === true && game.scene.isActive('GameScene') && !event.target.closest('input, button')) {
     game.scene.resume('GameScene');
     GameState.scenePaused = false;
   }
