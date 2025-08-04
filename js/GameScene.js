@@ -4,17 +4,20 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('player', 'images/player.png');
-    this.load.image('tower', 'images/tower.png');
-    this.load.image('background', 'images/bg.png');
-    this.load.image('beer', 'images/rootbeer.png');
+    // Assets are now loaded in BootScene for better performance
   }
 
   create(data) {
+    // Store event listeners for cleanup
+    this.eventListeners = [];
+    
+    // Initialize object pools for better performance
+    this.towerPool = [];
+    this.rootbeerPool = [];
     
     const player = data.player || 'Player';
 
-    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white', backgroundColor: 'black' }).setDepth(1)
+    this.add.text(0, 0, `PLAYER: ${player}`, { font: '15px Arial', color: 'white', backgroundColor: 'black' }).setDepth(1);
     
 
     // Add background
@@ -26,14 +29,22 @@ class GameScene extends Phaser.Scene {
 
     // Create groups
     GameState.towers = this.physics.add.group();
-    GameState.beers = this.physics.add.group();
+    GameState.rootbeers = this.physics.add.group();
 
-    // Input
-    this.input.on('pointerdown', () => this.jump());
-    this.input.keyboard.on('keydown-SPACE', () => this.jump());
+    // Input - store references for cleanup
+    const pointerHandler = () => this.jump();
+    const spaceHandler = () => this.jump();
+    this.input.on('pointerdown', pointerHandler);
+    this.input.keyboard.on('keydown-SPACE', spaceHandler);
+    this.eventListeners.push(['pointerdown', pointerHandler], ['keydown-SPACE', spaceHandler]);
 
-    // Pause Button
-    this.add.text(250, 450, 'Pause', { font: '15px Arial', color: 'white', backgroundColor: 'black' })
+    // Pause Button - position relative to game width
+    this.add.text(this.game.config.width - 80, this.game.config.height - 30, 'Pause', { 
+      font: '15px Arial', 
+      color: 'white', 
+      backgroundColor: 'black',
+      padding: { x: 5, y: 2 }
+    })
       .setInteractive()
       .setDepth(1)
       .on('pointerdown', () => {
@@ -41,10 +52,11 @@ class GameScene extends Phaser.Scene {
         this.scene.pause();
       });
 
-          this.input.keyboard.on('keydown-ESC', () => {
-        this.scene.start('TitleScene');
-       
-    });
+    const escHandler = () => {
+      this.scene.start('TitleScene');
+    };
+    this.input.keyboard.on('keydown-ESC', escHandler);
+    this.eventListeners.push(['keydown-ESC', escHandler]);
 
     // Score
     GameState.score = 0;
@@ -67,22 +79,34 @@ class GameScene extends Phaser.Scene {
       GameState.gameOver = true;
     }, null, this);
 
-    this.physics.add.overlap(GameState.player, GameState.beers, () => {
-      const beer = GameState.beers.getFirstAlive();
-      if (beer) {
-        beer.destroy();
+    this.physics.add.overlap(GameState.player, GameState.rootbeers, (player, rootbeer) => {
+      if (rootbeer && rootbeer.active) {
+        rootbeer.setActive(false).setVisible(false);
+        rootbeer.body.setVelocityX(0);
         GameState.score += 1;
         this.scoreText.setText('SCORE: ' + GameState.score);
       }
     });
 
-    // Spawn towers and beer
+    // Spawn towers and rootbeer
     this.time.addEvent({
       delay: 1500,
       callback: this.spawn,
       callbackScope: this,
       loop: true,
     });
+  }
+
+  shutdown() {
+    // Clean up event listeners to prevent memory leaks
+    this.eventListeners.forEach(([event, handler]) => {
+      if (event.startsWith('keydown-')) {
+        this.input.keyboard.off(event, handler);
+      } else {
+        this.input.off(event, handler);
+      }
+    });
+    this.eventListeners = [];
   }
 
   update() {
@@ -100,7 +124,15 @@ class GameScene extends Phaser.Scene {
       GameState.gameOver = true;
     }
 
-    this.background.tilePositionX += .7 ;
+    this.background.tilePositionX += 0.7;
+    
+    // Clean up off-screen objects for pooling
+    [...this.towerPool, ...this.rootbeerPool].forEach(obj => {
+      if (obj.active && obj.x < -100) {
+        obj.setActive(false).setVisible(false);
+        obj.body.setVelocityX(0);
+      }
+    });
   }
 
   jump() {
@@ -109,16 +141,77 @@ class GameScene extends Phaser.Scene {
     }
   }
 
+  getPooledTower() {
+    // More efficient pooling - find first inactive object
+    for (let i = 0; i < this.towerPool.length; i++) {
+      if (!this.towerPool[i].active) {
+        return this.towerPool[i];
+      }
+    }
+    return null;
+  }
+  
+  getPooledRootbeer() {
+    // More efficient pooling - find first inactive object
+    for (let i = 0; i < this.rootbeerPool.length; i++) {
+      if (!this.rootbeerPool[i].active) {
+        return this.rootbeerPool[i];
+      }
+    }
+    return null;
+  }
+
+  resetPooledObject(obj, x, y) {
+    // Properly reset all object properties
+    obj.setPosition(x, y)
+       .setActive(true)
+       .setVisible(true)
+       .setScale(1)
+       .setRotation(0);
+    
+    // Reset physics body
+    if (obj.body) {
+      obj.body.setVelocityX(0);
+      obj.body.setVelocityY(0);
+      obj.body.setAllowGravity(false);
+    }
+  }
+
   spawn() {
     const gap = 160;
     const towerY = Phaser.Math.Between(75, 420 - gap);
+    const speed = -250 - (GameState.score * 2);
     
-    const upper = GameState.towers.create(350, towerY - gap / 2, 'tower').setOrigin(0, 1).setScale(1);
-    const lower = GameState.towers.create(350, towerY + gap / 2, 'tower').setOrigin(0, 0).setScale(1);
-    const beer = GameState.beers.create(382, towerY, 'beer');
+    // Try to reuse pooled objects, create new ones if needed
+    let upper = this.getPooledTower();
+    if (upper) {
+      this.resetPooledObject(upper, 350, towerY - gap / 2);
+    } else {
+      upper = GameState.towers.create(350, towerY - gap / 2, 'tower');
+      this.towerPool.push(upper);
+    }
+    upper.setOrigin(0, 1);
+    
+    let lower = this.getPooledTower();
+    if (lower) {
+      this.resetPooledObject(lower, 350, towerY + gap / 2);
+    } else {
+      lower = GameState.towers.create(350, towerY + gap / 2, 'tower');
+      this.towerPool.push(lower);
+    }
+    lower.setOrigin(0, 0);
+    
+    let rootbeer = this.getPooledRootbeer();
+    if (rootbeer) {
+      this.resetPooledObject(rootbeer, 382, towerY);
+    } else {
+      rootbeer = GameState.rootbeers.create(382, towerY, 'rootbeer');
+      this.rootbeerPool.push(rootbeer);
+    }
 
-    [upper, lower, beer].forEach(obj => {
-      obj.body.setVelocityX(-250-(GameState.score*2));
+    // Set velocity and physics for all objects
+    [upper, lower, rootbeer].forEach(obj => {
+      obj.body.setVelocityX(speed);
       obj.body.setAllowGravity(false);
     });
   }

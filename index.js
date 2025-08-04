@@ -32,8 +32,7 @@ const GameState = {
   topScore: 0,
   player: null,
   towers: null,
-  beers: null,
-  username: null
+  rootbeers: null
 };
 
 // Event listener to resume the game when clicked (if paused)

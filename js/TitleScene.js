@@ -4,13 +4,7 @@ class TitleScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('title_background', 'images/title_bg.png');
-    
-    this.load.on('loaderror', (file) => {
-      if (file.key === 'title_background') {
-        console.warn('Title background image not found, using fallback');
-      }
-    });
+    // Assets are now loaded in BootScene for better performance
   }
 
   create() {
@@ -69,12 +63,12 @@ class TitleScene extends Phaser.Scene {
   
 
 
-      startButton.on('pointerover', () => {
-      startButton.setStyle({ backgroundColor: '#FAECCC',color:'#381C12' }); // highlight
+    startButton.on('pointerover', () => {
+      startButton.setStyle({ backgroundColor: '#FAECCC', color: '#381C12' }); // highlight
     });
 
     startButton.on('pointerout', () => {
-      startButton.setStyle({ backgroundColor: '#381C12', color:'#FAECCC' }); // reset
+      startButton.setStyle({ backgroundColor: '#381C12', color: '#FAECCC' }); // reset
     });
 }
 }
