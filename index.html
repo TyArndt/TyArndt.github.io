@@ -199,7 +199,11 @@
 
 
         // Create player
+        // All character sprites share one hitbox size regardless of their source image
+        // dimensions (they range from 34x42 to 42x36) so gameplay is identical no matter
+        // which character is selected.
         GameState.player = this.physics.add.sprite(50, 240, GameState.selectedSprite || 'player').setOrigin(0, 0);
+        GameState.player.body.setSize(36, 42);
 
 
         // Create groups
